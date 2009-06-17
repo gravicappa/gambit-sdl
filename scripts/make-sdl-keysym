@@ -15,8 +15,8 @@ function emit_constant (prefix, name, value) {
 	name=tolower(name);
 	sub(/_/,"-", name);
 	if (length(value) > 0) {
-		#print name, $2
-		printf("(define +%s+ %s)\n", name, $2);
+		sub(/^0x/,"#x", value)
+		printf("(define +%s+ %s)\n", name, value);
 	}
 }
 
