@@ -1,10 +1,16 @@
 (define-macro (%eval-at-macroexpand expr)
-  (eval expr)
-  `(void))
+  (eval expr (scheme-report-environment 5))
+  #f)
 
-(%eval-at-macroexpand 
-  (define %ffi-releasers
-          (list->table '(("release-rc" . "___EXT(___release-rc)(p);\n")))))
+(%eval-at-macroexpand
+  (define %ffi-releasers (make-table)))
+
+(define-macro (%extern-object-releaser-set! name code)
+  (eval `(table-set! %ffi-releasers ,name ,code)
+        (scheme-report-environment 5))
+  #f)
+
+(%extern-object-releaser-set! "release-rc" "___EXT(___release-rc)(p);\n")
 
 (%eval-at-macroexpand
   (define (%string-replace new old str)

@@ -8,4 +8,6 @@
 (c-define-type SDLMod int)
 (%define/extern-object "SDL_Rect" "release-rc")
 (%define/extern-object "SDL_Event" "release-rc")
+
+(%extern-object-releaser-set! "SDL_FreeSurface" "SDL_FreeSurface(p);\n")
 (%define/extern-object "SDL_Surface" "SDL_FreeSurface")

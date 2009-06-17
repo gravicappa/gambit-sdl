@@ -25,7 +25,7 @@ eof
             r.h = ___arg4;
             pr = ___CAST(SDL_Rect*, ___EXT(___alloc_rc)(sizeof(r)));
             *pr = r;
-            ___result_voidstar = r;
+            ___result_voidstar = pr;
             "))
 
 (define fill-rect
@@ -49,13 +49,13 @@ eof
   (c-lambda (SDL_Surface* SDL_Rect* SDL_Surface* SDL_Rect*)
             bool
             "
-            ___result = (SDL_BlitSurface(___arg1, ___arg2, ___arg3, ___arg4) 
+            ___result = (SDL_BlitSurface(___arg1, ___arg2, ___arg3, ___arg4)
                          == 0);
             "))
 
 (define (init flags)
-  ((c-lambda (unsigned-int32) 
-             bool 
+  ((c-lambda (unsigned-int32)
+             bool
              "___result = (SDL_Init(___arg1) == 0);")
    (apply bitwise-ior flags)))
 
@@ -109,22 +109,22 @@ eof
             "SDL_UpdateRect"))
 
 (define flip!
-  (c-lambda (SDL_Surface*) 
-            bool 
+  (c-lambda (SDL_Surface*)
+            bool
             "___result = (SDL_Flip(___arg1) == 0);"))
-            
+
 (define must-lock-surface?
   (c-lambda (SDL_Surface*)
             bool
             "___result = SDL_MUSTLOCK(___arg1);"))
 
-(c-define (%call-event-handler handler ev) 
-          (nonnull-function SDL_Event*) 
-          bool 
-          "call_event_handler" 
+(c-define (%call-event-handler handler ev)
+          (scheme-object SDL_Event*)
+          bool
+          "call_event_handler"
           "static"
   (handler ev))
-  
+
 (define event-loop
   (c-lambda (scheme-object)
             void
@@ -148,15 +148,15 @@ eof
 (define show-cursor!
   (c-lambda (bool)
             bool
-            "___result = (SDL_ShowCursor((___arg1) 
-                                        ? SDL_ENABLE 
-                                        : SDL_DISABLE) 
+            "___result = (SDL_ShowCursor((___arg1)
+                                        ? SDL_ENABLE
+                                        : SDL_DISABLE)
                           == SDL_ENABLE);"))
 
 (define lock-surface!
   (c-lambda (SDL_Surface*)
             bool
-            "___result = (SDL_LockSurface(___arg1) == 0)"))
+            "___result = (SDL_LockSurface(___arg1) == 0);"))
 
 (define unlock-surface!
   (c-lambda (SDL_Surface*)
