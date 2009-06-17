@@ -1,7 +1,7 @@
 #!/bin/sh
 
 . `dirname $0`/functions
-create_tags -n "/usr/include/SDL/SDL_events.h"
+create_tags "/usr/include/SDL/SDL_video.h"
 
 make_struct_accessor() {
 	[ -z "$1" ] || [ -z "$2" ] && return
@@ -16,14 +16,15 @@ make_struct_accessor() {
 	esac
 
 	local accessor="`lisp_name $st-$field`"
-	case "$type" in 
+	case "$type" in
 		*[*) return ;;
+		*'*') return ;;
 		*'*') local result='___result_voidstar' ;;
-		Bool) accessor="${accessor}?" 
+		Bool) accessor="${accessor}?"
 		      type='bool';;
 	esac
 
-	cat << ! | expand -t2 
+	cat << ! | expand -t2
 (define $accessor
   (c-lambda ($st*)
 	          $type
@@ -31,13 +32,15 @@ make_struct_accessor() {
 
 !
 
-	cat << ! | expand -t2 
+  if [ -n "$generate_setters" ] ; then
+		cat << ! | expand -t2
 (define ${accessor}-set!
   (c-lambda ($st* $type)
 					  void
 	          "___arg1->$field = ___arg2;"))
 
 !
+  fi
 }
 
 make_struct_accessors() {
@@ -47,6 +50,7 @@ make_struct_accessors() {
 	done
 }
 
+echo SDL_Surface |
 while read struct ; do
 	make_struct_accessors $struct
 done
