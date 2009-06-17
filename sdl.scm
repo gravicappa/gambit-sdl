@@ -25,7 +25,7 @@ eof
             ___result_voidstar = pr;
             "))
 
-(define fill-rect
+(define fill-rect*
   (c-lambda (SDL_Surface* int int int int rgb_color)
             bool
             "
@@ -36,6 +36,11 @@ eof
             r.h = ___arg5;
             ___result = (SDL_FillRect(___arg1, &r, ___arg6) == 0);
             "))
+
+(define fill-rect
+  (c-lambda (SDL_Surface* SDL_Rect* rgb_color)
+            bool
+            "___result = (SDL_FillRect(___arg1, ___arg2, ___arg3) == 0);"))
 
 (define set-clip-rect!
   (c-lambda (SDL_Surface* SDL_Rect*)
@@ -95,7 +100,7 @@ eof
             unsigned-int16
             "___result = ___arg1->pitch;"))
 
-(define set-video-mode!
+(define set-video-mode
   (c-lambda (int int int unsigned-int32)
             SDL_Surface*
             "SDL_SetVideoMode"))
@@ -164,3 +169,5 @@ eof
   (c-lambda (char-string)
             SDL_Surface*/SDL_FreeSurface
             "SDL_LoadBMP"))
+
+
