@@ -1,10 +1,7 @@
 (include "header.scm")
 
 (c-declare #<<eof
-
-#include <stdlib.h>
 #include <SDL/SDL.h>
-
 eof
 )
 
