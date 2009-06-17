@@ -2,7 +2,7 @@
 
 generate_setters=
 
-. ./functions
+. `dirname $0`/functions
 sdl_inc='/usr/include/SDL'
 create_tags "$sdl_inc/SDL_events.h $sdl_inc/SDL_keyboard.h"
 

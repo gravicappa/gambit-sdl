@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. ./functions
+. `dirname $0`/functions
 
 files='/usr/include/X11/Xutil.h 
        /usr/include/X11/Xatom.h 

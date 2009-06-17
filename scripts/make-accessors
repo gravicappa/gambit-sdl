@@ -1,6 +1,6 @@
 #!/bin/sh
 
-. ./functions
+. `dirname $0`/functions
 create_tags -n "/usr/include/SDL/SDL_events.h"
 
 make_struct_accessor() {
