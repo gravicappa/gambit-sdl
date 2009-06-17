@@ -1,0 +1,125 @@
+#!/bin/sh
+
+generate_setters=
+
+. ./functions
+sdl_inc='/usr/include/SDL'
+create_tags "$sdl_inc/SDL_events.h $sdl_inc/SDL_keyboard.h"
+
+common_fields='type'
+common_fields_re=`for f in $common_fields; do printf "\<$f\>|"; done \
+                  | sed 's/|$//'`
+
+events=`cut -f1 < "$tags" | grep -E '^SDL_[A-Za-z]*Event' | grep -v SDL_Event | sort | uniq`
+
+get_event_fields() {
+	get_struct_fields $1 #| grep -vE "$common_fields_re"
+}
+
+get_event_names() {
+	sed -n "/m	union:SDL_Event/p" < "$tags" \
+	| sed -n 's/.*\(\<SDL_[A-Za-z]*\>\) \([a-z]*\);.*/\1:\2/p'
+}
+
+get_event_field() {
+	get_event_names | sed -n "/\<$1\>/p" | cut -d: -f2
+}
+
+make_event_accessor() {
+	[ -z "$1" ] || [ -z "$2" ] || [ -z "$3" ] && return
+
+	local ev="$1"
+	local ev_field="$2"
+	local field="$3"
+	local field_type="$(get_field_type `get_struct_name $ev` $field)"
+	local type=${4-$field_type}
+	local result='___result'
+
+	# workarounds
+	case "$field" in
+		c_*) field=${field##c_} ;;
+	esac
+
+	local field_name="`echo $field | tr . -`"
+	local accessor="`lisp_name $ev-$field_name | sed 's/^sdl-//'`"
+	case "$type" in 
+	  *SDL_keysym*) return ;;
+	  *SDL_*) return ;;
+		*'['*) return ;;
+		*void*) return ;;
+		*'*') result='___result_voidstar' ;;
+		Bool) accessor="${accessor}?" 
+		      type='bool';;
+	esac
+
+	cat << ! | expand -t2 
+(define $accessor
+  (c-lambda (SDL_Event*) 
+	          $type 
+	          "$result = ___arg1->$ev_field.$field;"))
+
+!
+
+	if [ -n "$generate_setter" ] ; then
+		cat << ! | expand -t2 
+(define ${accessor}-set!
+  (c-lambda (SDL_Event* $type)
+	          void
+	          "___arg1->$ev_field.$field = ___arg2;"))
+
+!
+	fi
+}
+
+make_event_accessors() {
+	ev="$1"
+	field="`get_event_field $ev`"
+	name=`get_struct_name $ev`
+	for f in `get_struct_fields $name`; do
+		make_event_accessor "$ev" "$field" "$f"
+	done
+}
+
+make_any_event_accessors() {
+	ev=SDL_Event
+	field="`get_event_field $ev`"
+	for f in $(get_struct_fields `get_struct_name SDL_Event`) ; do
+		make_event_accessor "$ev" "$field" "$f"
+	done
+}
+
+#cat << !
+#;; XAnyEvent accessors
+#
+#`make_any_event_accessors`
+#
+#!
+
+cat << !
+;; SDL_Event type
+
+(define event-type
+  (c-lambda (SDL_Event*)
+	          Uint8
+						"___result = ___arg1->type;"))
+
+!
+
+for ev in $events ; do
+	if [ -n "$(get_struct_fields `get_struct_name $ev`)" ] ; then
+		cat << !
+;; $ev accessors
+
+`make_event_accessors "$ev"`
+
+!
+	fi
+done
+
+ev="SDL_KeyboardEvent"
+field="`get_event_field $ev`"
+name=`get_struct_name $ev`
+for f in $(get_struct_fields `get_struct_name SDL_keysym`) ; do
+	field_type="$(get_field_type `get_struct_name SDL_keysym` $f)"
+	make_event_accessor "$ev" "$field" "keysym.$f" "$field_type"
+done

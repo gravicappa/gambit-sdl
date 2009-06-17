@@ -1,0 +1,35 @@
+#!/bin/sh
+
+header=/usr/include/SDL/SDL_keysym.h
+
+awk '
+function emit_constant (prefix, name, value) {
+  gsub(/[=, ]/," ")
+	name=$1
+	value=$2
+
+	if (length(prefix) > 0) {
+		reg = sprintf("^%s", prefix);
+		sub(reg, "", name);
+	}
+	name=tolower(name);
+	sub(/_/,"-", name);
+	if (length(value) > 0) {
+		#print name, $2
+		printf("(define +%s+ %s)\n", name, $2);
+	}
+}
+
+/^[ 	]*SDLK_/ {
+  emit_constant("SDL", $1, $2);
+}
+/^[ 	]*KMOD_/ {
+  emit_constant("", $1, $2);
+}
+END { 
+  print "(define +kmod-ctrl+ (bitwise-ior +kmod-lctrl+ +kmod-rctrl+))"
+  print "(define +kmod-shift+ (bitwise-ior +kmod-lshift+ +kmod-rshift+))"
+  print "(define +kmod-alt+ (bitwise-ior +kmod-lalt+ +kmod-ralt+))"
+  print "(define +kmod-meta+ (bitwise-ior +kmod-lmeta+ +kmod-rmeta+))"
+}
+' < $header

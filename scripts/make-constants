@@ -1,0 +1,39 @@
+#!/bin/sh
+
+. ./functions
+
+files='/usr/include/X11/Xutil.h 
+       /usr/include/X11/Xatom.h 
+			 /usr/include/X11/X.h 
+			 /usr/include/X11/Xproto.h'
+types=`cat <<!
+Window 
+Drawable 
+Font 
+Pixmap 
+Cursor 
+Colormap 
+GContext 
+Atom 
+VisualID 
+Time 
+KeyCode 
+KeySym
+!
+`
+
+types_re=$(for f in $types; do printf "\<$f\>|"; done \
+                  | sed 's/|$//')
+
+for f in $files; do
+	grep -E "#define[ 	]*[A-Z][A-Z_a-z0-9]+[^(][ 	]" < "$f" \
+	| expand \
+	| cut -d' ' -f2 \
+	| grep -vE "$types_re"
+done \
+| while read def; do
+  name=+`lisp_name $def`+
+	cat << !
+(%define/x-const $name long "$def")
+!
+done

@@ -1,0 +1,53 @@
+#!/bin/sh
+
+. ./functions
+create_tags -n "/usr/include/SDL/SDL_events.h"
+
+make_struct_accessor() {
+	[ -z "$1" ] || [ -z "$2" ] && return
+	local st="$1"
+	local field="$2"
+	local type=$(get_field_type `get_struct_name $st` $field)
+	local result='___result'
+
+	# workarounds
+	case "$field" in
+		c_*) field=${field##c_} ;;
+	esac
+
+	local accessor="`lisp_name $st-$field`"
+	case "$type" in 
+		*[*) return ;;
+		*'*') local result='___result_voidstar' ;;
+		Bool) accessor="${accessor}?" 
+		      type='bool';;
+	esac
+
+	cat << ! | expand -t2 
+(define $accessor
+  (c-lambda ($st*)
+	          $type
+	          "$result = ___arg1->$field;"))
+
+!
+
+	cat << ! | expand -t2 
+(define ${accessor}-set!
+  (c-lambda ($st* $type)
+					  void
+	          "___arg1->$field = ___arg2;"))
+
+!
+}
+
+make_struct_accessors() {
+	st=$1
+	for f in $(get_struct_fields `get_struct_name $st`) ; do
+		make_struct_accessor $st $f
+	done
+}
+
+while read struct ; do
+	make_struct_accessors $struct
+done
+

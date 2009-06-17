@@ -1,0 +1,64 @@
+# vi:ft=sh
+
+tags=
+
+create_tags() {
+	if [ "$1" = "-n" ] ; then
+		tags=./tags
+		shift
+	else
+		tags=`mktemp ./tagsXXXX`
+		trap "rm \"$tags\"; exit 0" 0 2 3 15
+	fi
+	if [ -z "$1" ] ; then
+		files='/usr/include/X11/Xlib.h /usr/include/X11/Xutil.h'
+  else
+		files="$1"
+	fi
+	ctags -f "$tags" --sort=no $files
+}
+
+rm_tags() {
+	rm "$tags"
+}
+
+get_struct_name() {
+	local name=`grep -E "^$1" < "$tags" | cut -d'	' -f5 | cut -d: -f 3`
+	case $name in
+		__anon*) echo $name;;
+		*) echo $1;;
+	esac
+}
+
+get_struct_fields() {
+	sed -n "/m	struct:$1$/p" < "$tags" | cut -f1 
+}
+
+get_field_type() {
+	local ev=$1
+	local field=$2
+	sed -n "/^$field	.*m	struct:$ev/p" < "$tags" \
+	| sed "s/.*\/\^\(.*\)\$\/.*$/\1/;
+	       s/[A-Za-z0-9_]\+ *[,;].*$//;
+				 s/^\s*//;s/\s*$//;
+				 s/ \*/*/;s/ $//;s/ /-/g"
+}
+
+lisp_name() {
+	echo $1 | sed 's/[A-Z][a-z]/-&/g;s/_/-/g' \
+	| sed 's/^-//' | sed 's/-\+-/-/g' | tr A-Z a-z
+}
+	#| sed 's/\(\w\)-\([A-Z]\)-\([A-Z]\)-/\1-\2\3-/g' \
+
+#lisp_name LSBFirst
+#lisp_name KBBellPitch
+#lisp_name DoRed
+#lisp_name XYBitmap
+#lisp_name GCTileStipple
+#exit
+
+#create_tags
+#get_field_type `get_struct_name XAnyEvent` serial
+#get_field_type `get_struct_name XAnyEvent` display
+#get_field_type `get_struct_name XKeyEvent` x
+#exit
