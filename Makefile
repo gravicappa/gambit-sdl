@@ -2,6 +2,7 @@ sources =
 namespace = sdl\#
 namespace_def = sdl\#.scm
 
+GSC = gambit-gsc
 LDFLAGS = 
 GSCFLAGS = 
 objects = ${sources:%.scm=%.o1}
