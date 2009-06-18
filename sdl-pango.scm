@@ -12,6 +12,7 @@ eof
 (%extern-object-releaser-set! "SDLPango_FreeContext"
                               "SDLPango_FreeContext(p);\n")
 (%define/extern-object "SDLPango_Context" "SDLPango_FreeContext")
+(%define/extern-object "SDLPango_Matrix" "release-rc")
 
 (define pango-init
   (c-lambda () bool "SDLPango_Init"))
@@ -68,3 +69,30 @@ eof
   (c-lambda (SDLPango_Context* SDL_Surface* int int)
             void
             "SDLPango_Draw"))
+
+(define +pango-black-back+
+  ((c-lambda () SDLPango_Matrix* "___result_voidstar = MATRIX_BLACK_BACK;")))
+
+(define +pango-white-back+
+  ((c-lambda () SDLPango_Matrix* "___result_voidstar = MATRIX_WHITE_BACK;")))
+
+(define +pango-transparent-back-black-letter+
+  ((c-lambda () 
+             SDLPango_Matrix* 
+             "___result_voidstar = MATRIX_TRANSPARENT_BACK_BLACK_LETTER;")))
+
+(define +pango-transparent-back-white-letter+
+  ((c-lambda () 
+             SDLPango_Matrix* 
+             "___result_voidstar = MATRIX_TRANSPARENT_BACK_WHITE_LETTER;")))
+
+(define +pango-transparent-back-transparent-letter+
+  ((c-lambda
+    ()
+    SDLPango_Matrix*
+    "___result_voidstar = MATRIX_TRANSPARENT_BACK_TRANSPARENT_LETTER;")))
+
+(define pango-set-default-color!
+  (c-lambda (SDLPango_Context* SDLPango_Matrix*)
+            void
+            "SDLPango_SetDefaultColor"))
