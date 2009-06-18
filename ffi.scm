@@ -10,7 +10,7 @@
         (scheme-report-environment 5))
   #f)
 
-(%extern-object-releaser-set! "release-rc" "___EXT(___release-rc)(p);\n")
+(%extern-object-releaser-set! "release-rc" "___EXT(___release_rc)(p);\n")
 
 (%eval-at-macroexpand
   (define (%string-replace new old str)
@@ -39,9 +39,9 @@
             "printf(\"" c-releaser "(%p)\\n\", p);\n"
             "fflush(stdout);\n"
             "#endif\n"
-            "#ifdef really_free\n"
+            ;"#ifdef really_free\n"
             (table-ref %ffi-releasers type)
-            "#endif\n"
+            ;"#endif\n"
             "return ___FIX(___NO_ERR);\n"
             "}\n"))
        (c-define-type ,sym ,name)
