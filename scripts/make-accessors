@@ -15,7 +15,8 @@ make_struct_accessor() {
 		c_*) field=${field##c_} ;;
 	esac
 
-	local accessor="`lisp_name $st-$field`"
+	name=${st##SDL_}
+	local accessor="`lisp_name $name-$field`"
 	case "$type" in
 		*[*) return ;;
 		*'*') return ;;
