@@ -1,21 +1,20 @@
 namespace = sdl\#
 namespace_def = sdl\#.scm
 
-.PHONY: all clean clean-obj clean-generated build
+.PHONY: all clean clean-generated build
 
-do_make = targ=$@; \
-          for d in *.make ; do \
-				    make -f $$d $${targ}; \
-				  done
+do_make = for d in *.make ; do make -f $$d $${targ}; done
 
-all:
-	@${do_make}
+all: build ${namespace_def}
 
-${namespace_def}: ${wildcard *.scm}
+build:
+	@targ=all; ${do_make}
+
+${namespace_def}: ${shell ls *.scm | grep -v \#}
 	cat $^ | scripts/make-gambit-include ${namespace} > $@
 
 clean:
-	@${do_make}
+	@targ=$@; ${do_make}
 	-rm -f ${namespace_def} 2>/dev/null
 
 clean-generated:
