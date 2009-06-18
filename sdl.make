@@ -9,7 +9,8 @@ sources = sdl.scm \
 					sdl-types.scm \
 					sdl-const.scm \
 					sdl-events%.scm \
-					sdl-keysym%.scm
+					sdl-keysym%.scm \
+					sdl-accessors.scm \
 
 sdl-events%.scm:
 	scripts/make-sdl-events > $@

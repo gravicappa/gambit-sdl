@@ -8,6 +8,7 @@ eof
 (include "ffi.scm")
 (include "sdl-types.scm")
 (include "sdl-const.scm")
+(include "sdl-accessors.scm")
 (include "sdl-keysym%.scm")
 (include "sdl-events%.scm")
 
