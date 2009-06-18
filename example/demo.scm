@@ -55,4 +55,8 @@
         (sdl#throw-sdl-error #f))
     (run-hook (free-hook))))
 
-(sdl#call-with-sdl (list sdl#+init-video+) main-loop)
+(define (main)
+  (sdl#call-with-sdl (list sdl#+init-video+) main-loop)
+  (##gc))
+
+(main)
