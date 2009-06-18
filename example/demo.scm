@@ -3,7 +3,7 @@
 (load "../sdl-image")
 (load "../sdl-cairo")
 (load "../sdl-pango")
-(load "~/develop/research/Cairo-r2/cairo")
+(load "Cairo-r2/cairo")
 
 (load "hooks")
 (load "sdl-draw")
