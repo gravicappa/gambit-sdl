@@ -14,11 +14,13 @@
                      0.
                      (* 2 3.14))
           (cairo-fill c)
-          (cairo-identity-matrix c)
-          (cairo-translate c xc yc)
-          (cairo-rotate c time)
-          (cairo-set-source-surface c img 0. 0.)
-          (cairo-paint c))
+          (let ((hi (cairo-image-surface-get-height img))
+                (wi (cairo-image-surface-get-width img)))
+            (cairo-identity-matrix c)
+            (cairo-translate c (+ xc (* wi 0.5)) yc)
+            (cairo-rotate c time)
+            (cairo-set-source-surface c img (- (* 0.7 wi)) (- (* 0.5 hi)))
+            (cairo-paint c)))
         (sdl#blit-surface (sdl#sdl-cairo-surface cairo)
                           #f
                           screen
@@ -28,7 +30,7 @@
       (img #f))
   (add-hook (init-hook)
             (lambda (s)
-              (set! cairo (sdl#make-sdl-cairo 320 240))
+              (set! cairo (sdl#make-sdl-cairo (sdl#surface-w s) (sdl#surface-h s)))
               (set! img (cairo-image-surface-create-from-png "img.png"))))
   (add-hook (draw-hook) (lambda (s t) (cairo-draw s cairo img t)))
   (add-hook (free-hook)

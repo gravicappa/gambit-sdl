@@ -1,7 +1,9 @@
 (define (sdl-draw screen sprite time)
-  (let ((x (inexact->exact (+ 160 (round (* 20 (+ 1 (sin (* time 1.0))))))))
-        (y (inexact->exact (+ 120 (round (* 50 (+ 1 (cos (* time 1.5))))))))
-        (xs (inexact->exact (+ 260 (round (* 20 (+ 1 (sin (* time 4.0)))))))))
+  (let* ((xc (* 0.5 (sdl#surface-w screen)))
+         (yc (* 0.5 (sdl#surface-h screen)))
+         (x (inexact->exact (+ xc (round (* 20 (+ 1 (sin (* time 1.0))))))))
+         (y (inexact->exact (+ yc (round (* 50 (+ 1 (cos (* time 1.5))))))))
+         (xs (inexact->exact (+ yc (round (* 20 (+ 1 (sin (* time 4.0)))))))))
     (sdl#fill-rect screen (sdl#make-sdl-rect x y 30 20) #xff00ff)
     (if sprite
         (sdl#blit-surface sprite

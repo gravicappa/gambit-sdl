@@ -34,8 +34,8 @@
        (*running?* #f))))
 
 (define (main-loop)
-  (let ((screen (sdl#set-video-mode 320
-                                    240
+  (let ((screen (sdl#set-video-mode 1024
+                                    768
                                     0
                                     (bitwise-ior sdl#+anyformat+
                                                  sdl#+doublebuf+))))

@@ -23,8 +23,10 @@
               (sdl#pango-set-markup! pango "This is <i>pango</i>")))
   (add-hook (draw-hook)
             (lambda (s t)
-              (let ((x (inexact->exact (round (+ 120 (* 40 (sin (+ t 0.4)))))))
-                    (y (inexact->exact (round (+ 120 (* 40 (cos (* t 1.3))))))))
+              (let* ((xc (* 0.5 (sdl#surface-w s)))
+                     (yc (* 0.5 (sdl#surface-h s)))
+                     (x (inexact->exact (round (+ xc (* 40 (sin (+ t 0.4)))))))
+                     (y (inexact->exact (round (+ yc (* 40 (cos (* t 1.3))))))))
                 (sdl#pango-draw pango surface x y)
                 (sdl#blit-surface surface
                                   #f
