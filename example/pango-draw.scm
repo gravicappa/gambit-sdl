@@ -2,7 +2,13 @@
   #f)
 
 (let ((pango #f)
-      (surface #f))
+      (surface #f)
+      (text (string-append
+             "This <i>is</i> pango text!"
+             " It supports unicode "
+             "<span background=\"red\" color=\"yellow\">  ☭</span>!"
+             " Даже так."
+             "<span color=\"red\">Ιλι τακ.</span>")))
   (add-hook (init-hook)
             (lambda (s)
               (sdl#pango-init)
@@ -16,11 +22,11 @@
                              #x000000ff
                              #xff000000))
               (set! pango (sdl#pango-create-context))
-              (sdl#pango-set-minimum-size! pango 100 0)
+              (sdl#pango-set-minimum-size! pango 200 0)
               (sdl#pango-set-default-color!
                pango
                sdl#+pango-transparent-back-white-letter+)
-              (sdl#pango-set-markup! pango "This is <i>pango</i>")))
+              (sdl#pango-set-markup! pango text)))
   (add-hook (draw-hook)
             (lambda (s t)
               (let* ((xc (* 0.5 (sdl#surface-w s)))
