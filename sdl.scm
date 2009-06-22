@@ -121,21 +121,6 @@ eof
             bool
             "___result = SDL_MUSTLOCK(___arg1);"))
 
-(c-define (%call-event-handler handler ev)
-          (scheme-object SDL_Event*)
-          bool
-          "call_event_handler"
-          "static"
-  (handler ev))
-
-(define event-loop
-  (c-lambda (scheme-object)
-            void
-            "
-            SDL_Event ev;
-            while (SDL_PollEvent(&ev) && call_event_handler(___arg1, &ev));
-            "))
-
 (define poll-event
   (c-lambda ()
             SDL_Event*/release-rc
@@ -147,6 +132,14 @@ eof
             }
             ___result_voidstar = pev;
             "))
+
+(define (event-loop thunk)
+  (let ((ev (poll-event)))
+    (if ev
+        (begin
+          (thunk ev)
+          (event-loop thunk))
+        #f)))
 
 (define show-cursor!
   (c-lambda (bool)
