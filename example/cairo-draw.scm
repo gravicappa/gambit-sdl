@@ -34,5 +34,5 @@
               (set! img (cairo-image-surface-create-from-png "img.png"))))
   (add-hook (draw-hook) (lambda (s t) (cairo-draw s cairo img t)))
   (add-hook (free-hook)
-            (lambda (s)
+            (lambda ()
               (cairo-surface-destroy img))))
