@@ -71,38 +71,45 @@ eof
             "SDLPango_Draw"))
 
 (define +pango-black-back+
-  ((c-lambda () SDLPango_Matrix* "___result_voidstar = MATRIX_BLACK_BACK;")))
+  ((c-lambda ()
+             SDLPango_Matrix*
+             "___result_voidstar = (SDLPango_Matrix *)MATRIX_BLACK_BACK;")))
 
 (define +pango-white-back+
-  ((c-lambda () SDLPango_Matrix* "___result_voidstar = MATRIX_WHITE_BACK;")))
+  ((c-lambda ()
+             SDLPango_Matrix*
+             "___result_voidstar = (SDLPango_Matrix *)MATRIX_WHITE_BACK;")))
 
 (define +pango-transparent-back-black-letter+
   ((c-lambda () 
              SDLPango_Matrix* 
-             "___result_voidstar = MATRIX_TRANSPARENT_BACK_BLACK_LETTER;")))
+             "___result_voidstar 
+               = (SDLPango_Matrix *)MATRIX_TRANSPARENT_BACK_BLACK_LETTER;")))
 
 (define +pango-transparent-back-white-letter+
   ((c-lambda () 
              SDLPango_Matrix* 
-             "___result_voidstar = MATRIX_TRANSPARENT_BACK_WHITE_LETTER;")))
+             "___result_voidstar 
+               = (SDLPango_Matrix *)MATRIX_TRANSPARENT_BACK_WHITE_LETTER;")))
 
 (define +pango-transparent-back-transparent-letter+
   ((c-lambda
     ()
     SDLPango_Matrix*
-    "___result_voidstar = MATRIX_TRANSPARENT_BACK_TRANSPARENT_LETTER;")))
+    "___result_voidstar 
+      = (SDLPango_Matrix *)MATRIX_TRANSPARENT_BACK_TRANSPARENT_LETTER;")))
 
 (define pango-set-default-color!
   (c-lambda (SDLPango_Context* SDLPango_Matrix*)
             void
             "SDLPango_SetDefaultColor"))
 
-(define pango-matrix<-rgb
+(define pango-matrix<-rgba
   (let ((color (lambda (c)
                  (cond ((and (exact? c) (integer? c)) c)
                        (else (round (* 255 (inexact->exact c))))))))
-    (lambda (r g b)
-      ((c-lambda (unsigned-int8 unsigned-int8 unsigned-int8)
+    (lambda (r g b a)
+      ((c-lambda (unsigned-int8 unsigned-int8 unsigned-int8 unsigned-int8)
                  SDLPango_Matrix*/release-rc
                  "
                   SDLPango_Matrix colormat, *pcolormat;
@@ -114,7 +121,7 @@ eof
                   colormat.m[1][0] = colormat.m[1][1] = ___arg2;
                   colormat.m[2][0] = colormat.m[2][1] = ___arg3;
                   colormat.m[3][0] = 0;
-                  colormat.m[3][1] = 255;
+                  colormat.m[3][1] = ___arg4;
 
                   pcolormat = ___CAST(SDLPango_Matrix*,
                                       ___EXT(___alloc_rc)(sizeof(colormat)));
@@ -125,5 +132,8 @@ eof
                  )
        (color r)
        (color g)
-       (color b)))))
+       (color b)
+       (color a)))))
 
+(define (pango-matrix<-rgb r g b)
+  (pango-matrix<-rgba r g b 255))
