@@ -22,7 +22,8 @@ eof
             r.w = ___arg3;
             r.h = ___arg4;
             pr = ___CAST(SDL_Rect*, ___EXT(___alloc_rc)(sizeof(r)));
-            *pr = r;
+            if (pr)
+              *pr = r;
             ___result_voidstar = pr;
             "))
 
