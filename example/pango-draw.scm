@@ -25,7 +25,7 @@
               (sdl#pango-set-minimum-size! pango 200 0)
               (sdl#pango-set-default-color!
                pango
-               sdl#+pango-transparent-back-white-letter+)
+               (sdl#pango-matrix<-rgb 255 1.0 0.7))
               (sdl#pango-set-markup! pango text)))
   (add-hook (draw-hook)
             (lambda (s t)

@@ -96,3 +96,34 @@ eof
   (c-lambda (SDLPango_Context* SDLPango_Matrix*)
             void
             "SDLPango_SetDefaultColor"))
+
+(define pango-matrix<-rgb
+  (let ((color (lambda (c)
+                 (cond ((and (exact? c) (integer? c)) c)
+                       (else (round (* 255 (inexact->exact c))))))))
+    (lambda (r g b)
+      ((c-lambda (unsigned-int8 unsigned-int8 unsigned-int8)
+                 SDLPango_Matrix*/release-rc
+                 "
+                  SDLPango_Matrix colormat, *pcolormat;
+                  int i, j;
+
+                  memset(colormat.m, 0, sizeof(colormat.m));
+
+                  colormat.m[0][0] = colormat.m[0][1] = ___arg1;
+                  colormat.m[1][0] = colormat.m[1][1] = ___arg2;
+                  colormat.m[2][0] = colormat.m[2][1] = ___arg3;
+                  colormat.m[3][0] = 0;
+                  colormat.m[3][1] = 255;
+
+                  pcolormat = ___CAST(SDLPango_Matrix*,
+                                      ___EXT(___alloc_rc)(sizeof(colormat)));
+                  if (pcolormat)
+                    *pcolormat = colormat;
+                  ___result_voidstar = pcolormat;
+                 "
+                 )
+       (color r)
+       (color g)
+       (color b)))))
+
