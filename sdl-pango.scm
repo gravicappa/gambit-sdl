@@ -115,13 +115,15 @@ eof
                   SDLPango_Matrix colormat, *pcolormat;
                   int i, j;
 
-                  memset(colormat.m, 0, sizeof(colormat.m));
-
-                  colormat.m[0][0] = colormat.m[0][1] = ___arg1;
-                  colormat.m[1][0] = colormat.m[1][1] = ___arg2;
-                  colormat.m[2][0] = colormat.m[2][1] = ___arg3;
+                  for (i = 0; i < 4; ++i) {
+                    colormat.m[0][i] = ___arg1;
+                    colormat.m[1][i] = ___arg2;
+                    colormat.m[2][i] = ___arg3;
+                  }
                   colormat.m[3][0] = 0;
                   colormat.m[3][1] = ___arg4;
+                  colormat.m[3][2] = 0;
+                  colormat.m[3][3] = 0;
 
                   pcolormat = ___CAST(SDLPango_Matrix*,
                                       ___EXT(___alloc_rc)(sizeof(colormat)));
