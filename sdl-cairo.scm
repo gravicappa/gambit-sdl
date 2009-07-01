@@ -112,7 +112,7 @@ init_cairo_on_surface(struct sdl_cairo *c)
     if (c->cairo_blit) {
       c->cairo = cairo_create(c->cairo_blit);
       if (c->cairo) {
-        cairo_set_antialias(c->cairo, CAIRO_ANTIALIAS_GRAY);
+        /*cairo_set_antialias(c->cairo, CAIRO_ANTIALIAS_SUBPIXEL);*/
         ret = 0;
       } else {
         log_printf(";; Error: unable to create cairo\n");
@@ -176,6 +176,18 @@ end-of-c
 (%define/extern-object "sdl_cairo_t" "free_sdl_cairo")
 (c-define-type cairo-t* (pointer "cairo_t"))
 (c-define-type SDL_Surface* (pointer "SDL_Surface"))
+
+(define +cairo-antialias-default+ 
+        ((c-lambda () int "___result = CAIRO_ANTIALIAS_DEFAULT;")))
+
+(define +cairo-antialias-none+ 
+        ((c-lambda () int "___result = CAIRO_ANTIALIAS_NONE;")))
+
+(define +cairo-antialias-gray+ 
+        ((c-lambda () int "___result = CAIRO_ANTIALIAS_GRAY;")))
+
+(define +cairo-antialias-subpixel+ 
+        ((c-lambda () int "___result = CAIRO_ANTIALIAS_SUBPIXEL;")))
 
 (define make-sdl-cairo
   (c-lambda (int int)
