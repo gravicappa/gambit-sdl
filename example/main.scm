@@ -4,11 +4,13 @@
 (load "../sdl-cairo")
 (load "../sdl-pango")
 (load "Cairo-r2/cairo")
+(load "s-cairo-pango/cairo-pango")
 
 (load "hooks")
 (load "sdl-draw")
 (load "cairo-draw")
 (load "pango-draw")
+(load "pango-cairo-draw")
 
 (define *running?* (make-parameter #t))
 (define *events* (make-parameter (make-table)))
