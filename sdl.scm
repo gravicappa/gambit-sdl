@@ -28,7 +28,7 @@ eof
             "))
 
 (define fill-rect*
-  (c-lambda (SDL_Surface* int int int int rgb_color)
+  (c-lambda (SDL_Surface* int int int int rgb-color)
             bool
             "
             SDL_Rect r;
@@ -40,7 +40,7 @@ eof
             "))
 
 (define fill-rect
-  (c-lambda (SDL_Surface* SDL_Rect* rgb_color)
+  (c-lambda (SDL_Surface* SDL_Rect* rgb-color)
             bool
             "___result = (SDL_FillRect(___arg1, ___arg2, ___arg3) == 0);"))
 
