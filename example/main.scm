@@ -4,7 +4,6 @@
 (load "../sdl-cairo")
 (load "../sdl-pango")
 (load "Cairo-r2/cairo")
-(load "s-cairo-pango/cairo-pango")
 
 (load "hooks")
 (load "sdl-draw")

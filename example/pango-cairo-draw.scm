@@ -1,4 +1,6 @@
 
+(load "s-pango-cairo/pango-cairo")
+
 (define (cairo-pango-draw screen cairo pango time)
   (if (and cairo pango)
       (let ((c (sdl#sdl-cairo-instance cairo)))
