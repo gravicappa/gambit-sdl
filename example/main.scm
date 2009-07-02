@@ -40,20 +40,21 @@
                                     0
                                     (bitwise-ior sdl#+anyformat+
                                                  sdl#+doublebuf+))))
-    (run-hook (init-hook) screen)
-    ;(sdl#pango-init)
+   
     (if screen
-        (let loop ()
-          (if (*running?*)
-              (begin
-                (sdl#fill-rect screen #f 0)
-                (run-hook (draw-hook) screen (time->seconds (current-time)))
-                (sdl#update-rect! screen 0 0 0 0)
-                (sdl#flip! screen)
-                (thread-sleep! 1/60)
-                (sdl#event-loop dispatch-events)
-                (loop))))
-        (sdl#throw-sdl-error #f))
+        (begin
+          (run-hook (init-hook) screen)
+          (let loop ()
+            (if (*running?*)
+                (begin
+                  (sdl#fill-rect screen #f 0)
+                  (run-hook (draw-hook) screen (time->seconds (current-time)))
+                  (sdl#update-rect! screen 0 0 0 0)
+                  (sdl#flip! screen)
+                  (thread-sleep! 1/60)
+                  (sdl#event-loop dispatch-events)
+                  (loop)))))
+          (sdl#throw-sdl-error #f))
     (run-hook (free-hook))))
 
 (define (main)
