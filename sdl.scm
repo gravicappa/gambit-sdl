@@ -67,11 +67,12 @@ eof
   (c-lambda () void "SDL_Quit"))
 
 (define (call-with-sdl flags thunk)
-  (init flags)
-  (dynamic-wind
-    (lambda () #f)
-    thunk
-    exit))
+  (if (init flags)
+      (dynamic-wind
+        (lambda () #f)
+        thunk
+        exit)
+      (throw-sdl-error #f)))
 
 (define set-unicode!
   (c-lambda (bool) bool "SDL_EnableUNICODE"))
@@ -165,4 +166,38 @@ eof
             SDL_Surface*/SDL_FreeSurface
             "SDL_LoadBMP"))
 
+(define screen-w
+  (c-lambda ()
+            int
+            "
+             const SDL_VideoInfo *info;
 
+             info = SDL_GetVideoInfo();
+             ___result = 0;
+             if (info) {
+               ___result = info->current_w;
+             }
+            "))
+
+(define screen-h
+  (c-lambda ()
+            int
+            "
+             const SDL_VideoInfo *info;
+
+             info = SDL_GetVideoInfo();
+             ___result = 0;
+             if (info) {
+               ___result = info->current_h;
+             }
+            "))
+
+(define video-driver-name
+  (c-lambda ()
+            char-string
+            "
+            char name[256];
+            ___result = SDL_VideoDriverName(name, 256);
+            "))
+
+(include "sdl-wm.scm")
