@@ -10,7 +10,7 @@
           (cairo-arc c
                      (+ xc (* 10 (+ (sin time))))
                      (+ yc (* 40 (+ (cos (+ time 20.3)))))
-                     40.
+                     (* 0.7 yc)
                      0.
                      (* 2 3.14))
           (cairo-fill c)
