@@ -200,4 +200,10 @@ eof
             ___result = SDL_VideoDriverName(name, 256);
             "))
 
+(define set-alpha!
+  (c-lambda (SDL_Surface* int unsigned-int8)
+            bool
+            "
+            ___result = (SDL_SetAlpha(___arg1, ___arg2, ___arg3) == 0);"))
+
 (include "sdl-wm.scm")
