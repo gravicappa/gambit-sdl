@@ -206,4 +206,7 @@ eof
             "
             ___result = (SDL_SetAlpha(___arg1, ___arg2, ___arg3) == 0);"))
 
+(define warp-mouse!
+  (c-lambda (int int) void "SDL_WarpMouse"))
+
 (include "sdl-wm.scm")
