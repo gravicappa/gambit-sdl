@@ -209,4 +209,9 @@ eof
 (define warp-mouse!
   (c-lambda (int int) void "SDL_WarpMouse"))
 
+(define video-surface
+  (c-lambda ()
+            SDL_Surface*
+            "SDL_GetVideoSurface"))
+
 (include "sdl-wm.scm")
