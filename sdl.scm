@@ -63,15 +63,19 @@ eof
              "___result = (SDL_Init(___arg1) == 0);")
    (apply bitwise-ior flags)))
 
-(define exit
+(define quit
   (c-lambda () void "SDL_Quit"))
 
 (define (call-with-sdl flags thunk)
   (if (init flags)
-      (dynamic-wind
-        (lambda () #f)
-        thunk
-        exit)
+      (let ((exception-handler (current-exception-handler)))
+        (with-exception-handler
+          (lambda (e)
+            (quit)
+            (exception-handler e))
+          (lambda ()
+            (thunk)
+            (quit))))
       (throw-sdl-error #f)))
 
 (define set-unicode!
