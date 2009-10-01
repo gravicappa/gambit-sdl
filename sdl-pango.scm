@@ -46,12 +46,12 @@ eof
             "SDLPango_SetMinimumSize"))
 
 (define pango-set-markup!
-  (c-lambda (SDLPango_Context* char-string)
+  (c-lambda (SDLPango_Context* UTF-8-string)
             void
             "SDLPango_SetMarkup(___arg1, ___arg2, -1);"))
 
 (define pango-set-text!
-  (c-lambda (SDLPango_Context* char-string)
+  (c-lambda (SDLPango_Context* UTF-8-string)
             void
             "SDLPango_SetText(___arg1, ___arg2, -1);"))
 
