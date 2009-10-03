@@ -12,7 +12,7 @@ eof
 (include "sdl-keysym%.scm")
 (include "sdl-events%.scm")
 
-(define make-sdl-rect
+(define make-rect
   (c-lambda (int int int int)
             SDL_Rect*/release-rc
             "
@@ -27,7 +27,7 @@ eof
             ___result_voidstar = pr;
             "))
 
-(define fill-rect*
+(define fill-rect/xywh!
   (c-lambda (SDL_Surface* int int int int rgb-color)
             bool
             "
@@ -39,7 +39,7 @@ eof
             ___result = (SDL_FillRect(___arg1, &r, ___arg6) == 0);
             "))
 
-(define fill-rect
+(define fill-rect!
   (c-lambda (SDL_Surface* SDL_Rect* rgb-color)
             bool
             "___result = (SDL_FillRect(___arg1, ___arg2, ___arg3) == 0);"))
@@ -49,7 +49,19 @@ eof
             void
             "SDL_SetClipRect"))
 
-(define blit-surface
+(define clip-rect
+  (c-lambda (SDL_Surface*)
+            SDL_Rect*/release-rc
+            "
+            SDL_Rect *pr = 0;
+            pr = ___CAST(SDL_Rect*, ___EXT(___alloc_rc)(sizeof(SDL_Rect)));
+            if (pr) {
+              SDL_GetClipRect(___arg1, pr);
+            }
+            ___result_voidstar = pr;
+            "))
+
+(define blit-surface!
   (c-lambda (SDL_Surface* SDL_Rect* SDL_Surface* SDL_Rect*)
             bool
             "
@@ -57,28 +69,27 @@ eof
                          == 0);
             "))
 
-(define (init flags)
-  ((c-lambda (unsigned-int32)
-             bool
-             "___result = (SDL_Init(___arg1) == 0);")
-   (apply bitwise-ior flags)))
+(define (init! flags)
+  (c-lambda (unsigned-int32)
+            bool
+            "___result = (SDL_Init(___arg1) == 0);"))
 
-(define quit
+(define quit!
   (c-lambda () void "SDL_Quit"))
 
 (define (call-with-sdl flags thunk)
-  (if (init flags)
+  (if (init! flags)
       (let ((exception-handler (current-exception-handler)))
         (with-exception-handler
           (lambda (e)
-            (quit)
+            (quit!)
             (exception-handler e))
           (lambda ()
             (thunk)
-            (quit))))
+            (quit!))))
       (throw-sdl-error #f)))
 
-(define set-unicode!
+(define enable-unicode!
   (c-lambda (bool) bool "SDL_EnableUNICODE"))
 
 (define get-error
@@ -107,7 +118,7 @@ eof
             unsigned-int16
             "___result = ___arg1->pitch;"))
 
-(define set-video-mode
+(define set-video-mode!
   (c-lambda (int int int unsigned-int32)
             SDL_Surface*
             "SDL_SetVideoMode"))
@@ -122,7 +133,7 @@ eof
             bool
             "___result = (SDL_Flip(___arg1) == 0);"))
 
-(define must-lock-surface?
+(define must-lock?
   (c-lambda (SDL_Surface*)
             bool
             "___result = SDL_MUSTLOCK(___arg1);"))
@@ -213,7 +224,7 @@ eof
 (define warp-mouse!
   (c-lambda (int int) void "SDL_WarpMouse"))
 
-(define video-surface
+(define get-video-surface
   (c-lambda ()
             SDL_Surface*
             "SDL_GetVideoSurface"))

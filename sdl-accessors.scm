@@ -29,6 +29,7 @@
             "
             SDL_Rect *pr;
             pr = ___CAST(SDL_Rect*, ___EXT(___alloc_rc)(sizeof(SDL_Rect)));
+            *pr = ___arg1->clip_rect;
             ___result_voidstar = pr;
             "))
 

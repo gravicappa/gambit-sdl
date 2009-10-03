@@ -1,4 +1,10 @@
-(include "header.scm")
+(namespace ("sdl-pango#"))
+(##include "~~/lib/gambit#.scm")
+
+(declare
+  (standard-bindings)
+  (extended-bindings)
+  (not safe))
 
 (c-declare #<<eof
 #include <pango/pango.h>
@@ -14,13 +20,13 @@ eof
 (%define/extern-object "SDLPango_Context" "SDLPango_FreeContext")
 (%define/extern-object "SDLPango_Matrix" "release-rc")
 
-(define pango-init
+(define init!
   (c-lambda () bool "SDLPango_Init"))
 
-(define pango-was-init?
+(define was-init?
   (c-lambda () bool "___result = (SDLPango_WasInit() == 0);"))
 
-(define pango-create-context
+(define create-context
   (c-lambda ()
             SDLPango_Context*/SDLPango_FreeContext
             "SDLPango_CreateContext"))
@@ -30,81 +36,81 @@ eof
             PangoLayout*
             "SDLPango_GetPangoLayout"))
 
-(define pango-layout-width
+(define layout-width
   (c-lambda (SDLPango_Context*)
             int
             "SDLPango_GetLayoutWidth"))
 
-(define pango-layout-height
+(define layout-height
   (c-lambda (SDLPango_Context*)
             int
             "SDLPango_GetLayoutHeight"))
 
-(define pango-set-minimum-size!
+(define set-minimum-size!
   (c-lambda (SDLPango_Context* int int)
             void
             "SDLPango_SetMinimumSize"))
 
-(define pango-set-markup!
+(define set-markup!
   (c-lambda (SDLPango_Context* UTF-8-string)
             void
             "SDLPango_SetMarkup(___arg1, ___arg2, -1);"))
 
-(define pango-set-text!
+(define set-text!
   (c-lambda (SDLPango_Context* UTF-8-string)
             void
             "SDLPango_SetText(___arg1, ___arg2, -1);"))
 
-(define pango-set-language!
+(define set-language!
   (c-lambda (SDLPango_Context* char-string)
             void
             "SDLPango_SetLanguage"))
 
-(define pango-set-dpi!
+(define set-dpi!
   (c-lambda (SDLPango_Context* double double)
             void
             "SDLPango_SetDpi"))
 
-(define pango-draw
+(define draw!
   (c-lambda (SDLPango_Context* SDL_Surface* int int)
             void
             "SDLPango_Draw"))
 
-(define +pango-black-back+
+(define +black-back+
   ((c-lambda ()
              SDLPango_Matrix*
              "___result_voidstar = (SDLPango_Matrix *)MATRIX_BLACK_BACK;")))
 
-(define +pango-white-back+
+(define +white-back+
   ((c-lambda ()
              SDLPango_Matrix*
              "___result_voidstar = (SDLPango_Matrix *)MATRIX_WHITE_BACK;")))
 
-(define +pango-transparent-back-black-letter+
+(define +transparent-back-black-letter+
   ((c-lambda () 
              SDLPango_Matrix* 
              "___result_voidstar 
                = (SDLPango_Matrix *)MATRIX_TRANSPARENT_BACK_BLACK_LETTER;")))
 
-(define +pango-transparent-back-white-letter+
+(define +transparent-back-white-letter+
   ((c-lambda () 
              SDLPango_Matrix* 
              "___result_voidstar 
                = (SDLPango_Matrix *)MATRIX_TRANSPARENT_BACK_WHITE_LETTER;")))
 
-(define +pango-transparent-back-transparent-letter+
+(define +transparent-back-transparent-letter+
   ((c-lambda
     ()
     SDLPango_Matrix*
     "___result_voidstar 
       = (SDLPango_Matrix *)MATRIX_TRANSPARENT_BACK_TRANSPARENT_LETTER;")))
 
-(define pango-set-default-color!
+(define set-default-color!
   (c-lambda (SDLPango_Context* SDLPango_Matrix*)
             void
             "SDLPango_SetDefaultColor"))
 
-(define pango-matrix<-rgba
+(define matrix<-rgba
   (let ((color (lambda (c)
                  (cond ((and (exact? c) (integer? c)) c)
                        (else (round (* 255 (inexact->exact c))))))))
@@ -137,5 +143,5 @@ eof
        (color b)
        (color a)))))
 
-(define (pango-matrix<-rgb r g b)
-  (pango-matrix<-rgba r g b 255))
+(define (matrix<-rgb r g b)
+  (matrix<-rgba r g b 255))

@@ -1,4 +1,10 @@
-(include "header.scm")
+(namespace ("sdl-cairo#"))
+(##include "~~/lib/gambit#.scm")
+
+(declare
+  (standard-bindings)
+  (extended-bindings)
+  (not safe))
 
 (c-declare #<<end-of-c
 
@@ -199,17 +205,17 @@ end-of-c
             bool
             "___result = (resize_sdl_cairo(___arg1, ___arg2, ___arg3) == 0);"))
 
-(define sdl-cairo-instance
+(define cairo
   (c-lambda (sdl_cairo_t*)
             cairo-t*
             "___result_voidstar = ___arg1->cairo;"))
 
-(define sdl-cairo-surface
+(define surface
   (c-lambda (sdl_cairo_t*)
             SDL_Surface*
             "___result_voidstar = ___arg1->sdl_blit;"))
 
-(define clear-cairo-surface
+(define clear-surface!
   (c-lambda (sdl_cairo_t*)
             void
             "clear_sdl_surface"))
