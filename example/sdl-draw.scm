@@ -4,15 +4,15 @@
          (x (inexact->exact (+ xc (round (* 20 (+ 1 (sin (* time 1.0))))))))
          (y (inexact->exact (+ yc (round (* 50 (+ 1 (cos (* time 1.5))))))))
          (xs (inexact->exact (+ yc (round (* 20 (+ 1 (sin (* time 4.0)))))))))
-    (sdl#fill-rect screen (sdl#make-sdl-rect x y 30 20) #xff00ff)
+    (sdl#fill-rect/xywh! screen x y 30 20 #xff00ff)
     (if sprite
-        (sdl#blit-surface sprite
-                          #f
-                          screen
-                          (sdl#make-sdl-rect xs
-                                             x
-                                             (sdl#surface-w sprite)
-                                             (sdl#surface-h sprite))))))
+        (sdl#blit-surface! sprite
+                           #f
+                           screen
+                           (sdl#make-rect xs
+                                          x
+                                          (sdl#surface-w sprite)
+                                          (sdl#surface-h sprite))))))
 
 (let ((sprite #f))
   (add-hook (init-hook) (lambda (s) (set! sprite (sdl#load-image "img.png"))))

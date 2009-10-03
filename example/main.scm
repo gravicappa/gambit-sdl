@@ -36,11 +36,11 @@
        (*running?* #f))))
 
 (define (main-loop)
-  (let ((screen (sdl#set-video-mode 1024
-                                    768
-                                    0
-                                    (bitwise-ior sdl#+anyformat+
-                                                 sdl#+doublebuf+))))
+  (let ((screen (sdl#set-video-mode! 1024
+                                     768
+                                     0
+                                     (bitwise-ior sdl#+anyformat+
+                                                  sdl#+doublebuf+))))
    
     (if screen
         (begin
@@ -48,9 +48,8 @@
           (let loop ()
             (if (*running?*)
                 (let ((t (time->seconds (current-time))))
-                  (sdl#fill-rect screen #f 0)
+                  (sdl#fill-rect! screen #f 0)
                   (run-hook (draw-hook) screen (time->seconds (current-time)))
-                  (sdl#update-rect! screen 0 0 0 0)
                   (sdl#flip! screen)
                   (let ((dt (- 1/60 (- (time->seconds (current-time)) t))))
                     (if (positive? dt)
@@ -61,7 +60,7 @@
     (run-hook (free-hook))))
 
 (define (main)
-  (sdl#call-with-sdl (list sdl#+init-video+) main-loop)
+  (sdl#call-with-sdl (bitwise-ior sdl#+init-video+) main-loop)
   (##gc))
 
 (main)
