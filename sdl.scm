@@ -113,11 +113,6 @@ eof
             SDL_Surface*/SDL_FreeSurface
             "SDL_CreateRGBSurface"))
 
-(define surface-pitch
-  (c-lambda (SDL_Surface*)
-            unsigned-int16
-            "___result = ___arg1->pitch;"))
-
 (define set-video-mode!
   (c-lambda (int int int unsigned-int32)
             SDL_Surface*

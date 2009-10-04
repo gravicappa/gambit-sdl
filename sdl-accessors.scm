@@ -23,16 +23,6 @@
             int
             "___result = ___arg1->offset;"))
 
-(define surface-clip-rect
-  (c-lambda (SDL_Surface*)
-            SDL_Rect*/release-rc
-            "
-            SDL_Rect *pr;
-            pr = ___CAST(SDL_Rect*, ___EXT(___alloc_rc)(sizeof(SDL_Rect)));
-            *pr = ___arg1->clip_rect;
-            ___result_voidstar = pr;
-            "))
-
 (define surface-unused1
   (c-lambda (SDL_Surface*)
             Uint32
@@ -53,3 +43,7 @@
             int
             "___result = ___arg1->refcount;"))
 
+(define surface-pixels
+  (c-lambda (SDL_Surface*)
+            (pointer void)
+            "___result_voidstar = ___arg1->pixels;"))
