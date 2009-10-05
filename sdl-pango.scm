@@ -121,7 +121,11 @@ eof
                   SDLPango_Matrix colormat, *pcolormat;
                   int i, j;
 
-                  for (i = 0; i < 4; ++i) {
+                  for (i = 0; i < 4; ++i)
+                    for (j = 0; j < 4; ++j)
+                      colormat.m[j][i] = 0;
+
+                  for (i = 1; i < 2; ++i) {
                     colormat.m[0][i] = ___arg1;
                     colormat.m[1][i] = ___arg2;
                     colormat.m[2][i] = ___arg3;
