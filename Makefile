@@ -16,6 +16,7 @@ ${namespace_def}: ${shell ls *.scm | grep -v \#}
 
 clean:
 	@targ=$@; ${do_make}
+	-rm *.o*
 	-rm -f ${namespace_def} 2>/dev/null
 	-rm -f ${name}.tar.bz2 2>/dev/null
 
