@@ -45,6 +45,16 @@ void log_printf(char *string, ...)
 
 #endif /*DEBUG*/
 
+#define AMASK 0xff000000
+#define RMASK 0x00ff0000
+#define GMASK 0x0000ff00
+#define BMASK 0x000000ff
+
+#define ASHIFT 24
+#define RSHIFT 16
+#define GSHIFT 8
+#define BSHIFT 0
+
 void
 free_blit_surface(struct sdl_cairo *c)
 {
@@ -84,14 +94,9 @@ init_sdl_surface(struct sdl_cairo *c)
   c->blit = realloc(c->blit, c->width * c->height * 4);
   if (c->blit) {
     c->sdl_blit = SDL_CreateRGBSurfaceFrom(c->blit,
-                                           c->width, 
-                                           c->height, 
-                                           32,
+                                           c->width, c->height, 32,
                                            c->width * 4,
-                                           0x00ff0000,
-                                           0x0000ff00,
-                                           0x000000ff,
-                                           0xff000000);
+                                           RMASK, GMASK, BMASK, AMASK);
 
     if (c->sdl_blit) {
       ret = 0;
@@ -173,6 +178,63 @@ clear_sdl_surface(struct sdl_cairo *c)
     memset(c->blit, 0, 4 * c->width * c->height);
 }
 
+#define RECIPROCAL_BITS 16
+static unsigned const reciprocal_table[256] = {
+
+#define ceil_div(a, b) ((a) + (b) - 1) / (b)
+#define R(i)  ((i) ? ceil_div(255 * (1 << RECIPROCAL_BITS), (i)) : 0)
+#define R1(i) R(i),  R(i + 1),   R(i + 2),   R(i + 3)
+#define R2(i) R1(i), R1(i + 4),  R1(i + 8),  R1(i + 12)
+#define R3(i) R2(i), R2(i + 16), R2(i + 32), R2(i + 48)
+
+  R3(0), R3(64), R3(128), R3(192)
+};
+ 
+#define RSHIFT 16
+#define GSHIFT 8
+#define BSHIFT 0
+
+void
+premult_pixels_onto(struct sdl_cairo *c, SDL_Rect *rect)
+{
+  if (c && c->blit && rect) {
+    int i, j, dp;
+    unsigned int *pix = (unsigned int *)c->blit;
+
+    if (rect->x < 0) {
+      rect->w += rect->x;
+      rect->x = 0;
+    }
+    if (rect->x + rect->w >= c->width) {
+      rect->w = c->width - rect->x - 1;
+    }
+    if (rect->y < 0) {
+      rect->h += rect->y;
+      rect->y = 0;
+    }
+    if (rect->y + rect->h >= c->height) {
+      rect->h = c->height - rect->y - 1;
+    }
+
+    if (rect->w > 0 && rect->h > 0) {
+      pix += rect->x + rect->y * c->width;
+      dp = c->width - rect->w;
+      for (i = rect->h; i; --i) {
+        int r, g, b, m;
+
+        for (j = rect->w; j; --j, ++pix) {
+          m = reciprocal_table[(*pix & AMASK) >> ASHIFT];
+          r = (((*pix & RMASK) * m) >> RECIPROCAL_BITS) & RMASK;
+          g = (((*pix & GMASK) * m) >> RECIPROCAL_BITS) & GMASK;
+          b = (((*pix & BMASK) * m) >> RECIPROCAL_BITS) & BMASK;
+          *pix = r | g | b | (*pix & AMASK);
+        }
+        pix += dp;
+      }
+    }
+  }
+}
+
 end-of-c
 )
 
@@ -182,6 +244,7 @@ end-of-c
 (%define/extern-object "sdl_cairo_t" "free_sdl_cairo")
 (c-define-type cairo-t* (pointer "cairo_t"))
 (c-define-type SDL_Surface* (pointer "SDL_Surface"))
+(c-define-type SDL_Rect* (pointer "SDL_Rect"))
 
 (define +cairo-antialias-default+ 
         ((c-lambda () int "___result = CAIRO_ANTIALIAS_DEFAULT;")))
@@ -219,3 +282,8 @@ end-of-c
   (c-lambda (sdl_cairo_t*)
             void
             "clear_sdl_surface"))
+
+(define premultiply-pixels!
+  (c-lambda (sdl_cairo_t* SDL_Rect*)
+            void
+            "premult_pixels_onto"))
