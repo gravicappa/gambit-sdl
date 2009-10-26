@@ -1,7 +1,10 @@
 targets = sdl-image.o1
 
-CFLAGS += ${shell sdl-config --cflags}
-LDFLAGS += ${shell sdl-config --libs} -lSDL_image
+SDL_CFLAGS = ${shell sdl-config --cflags} 
+SDL_LDFLAGS = ${shell sdl-config --libs} 
+
+CFLAGS += ${SDL_CFLAGS}
+LDFLAGS += ${SDL_LDFLAGS} -lSDL_image
 
 sdl-image.o1: sdl-image.scm 
 

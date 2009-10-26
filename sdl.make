@@ -1,7 +1,10 @@
 targets = sdl.o1
 
-CFLAGS += ${shell sdl-config --cflags} 
-LDFLAGS += ${shell sdl-config --libs}
+SDL_CFLAGS = ${shell sdl-config --cflags} 
+SDL_LDFLAGS = ${shell sdl-config --libs} 
+
+CFLAGS += ${SDL_CFLAGS}
+LDFLAGS += ${SDL_LDFLAGS}
 
 sources = sdl.scm \
           header.scm \
