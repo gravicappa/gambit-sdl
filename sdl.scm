@@ -113,6 +113,19 @@ eof
             SDL_Surface*/SDL_FreeSurface
             "SDL_CreateRGBSurface"))
 
+(define create-rgb-surface-from
+  (c-lambda ((pointer void)
+             int
+             int
+             int
+             int
+             unsigned-int32
+             unsigned-int32
+             unsigned-int32
+             unsigned-int32)
+            SDL_Surface*/SDL_FreeSurface
+            "SDL_CreateRGBSurfaceFrom"))
+
 (define set-video-mode!
   (c-lambda (int int int unsigned-int32)
             SDL_Surface*
