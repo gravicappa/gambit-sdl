@@ -237,4 +237,9 @@ eof
             SDL_Surface*
             "SDL_GetVideoSurface"))
 
+(define set-key-repeat!
+  (c-lambda (int int)
+            bool
+            "___result = (SDL_EnableKeyRepeat(___arg1, ___arg2) == 0);"))
+
 (include "sdl-wm.scm")

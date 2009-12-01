@@ -142,3 +142,7 @@
 (define +playing+ 2)
 (define +paused+ 3)
 (define +cd-error+ -1)
+
+;; Misc
+(define +default-repeat-delay+ 500)
+(define +default-repeat-interval+ 30)
