@@ -7,6 +7,8 @@
 (c-define-type Uint32 unsigned-int32)
 (c-define-type SDLKey int)
 (c-define-type SDLMod int)
+(c-define-type SDL_VideoInfo* (pointer "SDL_VideoInfo"))
+(c-define-type SDL_PixelFormat* (pointer "SDL_PixelFormat"))
 (%define/extern-object "SDL_Rect" "release-rc")
 (%define/extern-object "SDL_Event" "release-rc")
 

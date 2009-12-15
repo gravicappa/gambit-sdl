@@ -180,40 +180,19 @@ eof
             "___result = (SDL_LockSurface(___arg1) == 0);"))
 
 (define unlock-surface!
-  (c-lambda (SDL_Surface*)
-            void
-            "SDL_UnlockSurface"))
+  (c-lambda (SDL_Surface*) void "SDL_UnlockSurface"))
 
 (define load-bmp
-  (c-lambda (char-string)
-            SDL_Surface*/SDL_FreeSurface
-            "SDL_LoadBMP"))
+  (c-lambda (char-string) SDL_Surface*/SDL_FreeSurface "SDL_LoadBMP"))
 
-(define screen-w
-  (c-lambda ()
-            int
-            "
-             const SDL_VideoInfo *info;
+(define get-video-info
+  (c-lambda () SDL_VideoInfo* "SDL_GetVideoInfo"))
 
-             info = SDL_GetVideoInfo();
-             ___result = 0;
-             if (info) {
-               ___result = info->current_w;
-             }
-            "))
+(define (screen-w)
+  (video-info-current-w (get-video-info)))
 
-(define screen-h
-  (c-lambda ()
-            int
-            "
-             const SDL_VideoInfo *info;
-
-             info = SDL_GetVideoInfo();
-             ___result = 0;
-             if (info) {
-               ___result = info->current_h;
-             }
-            "))
+(define (screen-h)
+  (video-info-current-h (get-video-info)))
 
 (define video-driver-name
   (c-lambda ()
@@ -226,16 +205,13 @@ eof
 (define set-alpha!
   (c-lambda (SDL_Surface* int unsigned-int8)
             bool
-            "
-            ___result = (SDL_SetAlpha(___arg1, ___arg2, ___arg3) == 0);"))
+            "___result = (SDL_SetAlpha(___arg1, ___arg2, ___arg3) == 0);"))
 
 (define warp-mouse!
   (c-lambda (int int) void "SDL_WarpMouse"))
 
 (define get-video-surface
-  (c-lambda ()
-            SDL_Surface*
-            "SDL_GetVideoSurface"))
+  (c-lambda () SDL_Surface* "SDL_GetVideoSurface"))
 
 (define set-key-repeat!
   (c-lambda (int int)
