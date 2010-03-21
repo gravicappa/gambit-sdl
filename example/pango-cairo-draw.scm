@@ -1,6 +1,6 @@
 
 (load "s-pango/pango")
-(load "s-pango-cairo/pango-cairo")
+(load "s-pango/pango-cairo")
 
 (define (cairo-pango-draw screen cairo pango time)
   (if (and cairo pango)
