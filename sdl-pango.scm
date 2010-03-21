@@ -1,5 +1,5 @@
 (namespace ("sdl-pango#"))
-(##include "~~/lib/gambit#.scm")
+(##include "~~lib/gambit#.scm")
 
 (declare
   (standard-bindings)

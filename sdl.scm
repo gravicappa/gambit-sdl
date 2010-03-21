@@ -1,4 +1,10 @@
-(include "header.scm")
+(namespace ("sdl#"))
+(##include "~~lib/gambit#.scm")
+
+(declare
+  (standard-bindings)
+  (extended-bindings)
+  (not safe))
 
 (c-declare #<<eof
 #include <SDL/SDL.h>
