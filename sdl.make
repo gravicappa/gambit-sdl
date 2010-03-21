@@ -1,7 +1,8 @@
 targets = sdl.o1
 
-SDL_CFLAGS = ${shell sdl-config --cflags} 
-SDL_LDFLAGS = ${shell sdl-config --libs} 
+SDL_CONFIG = sdl-config
+SDL_CFLAGS = ${shell ${SDL_CONFIG} --cflags}
+SDL_LDFLAGS = ${shell ${SDL_CONFIG} --libs}
 
 CFLAGS += ${SDL_CFLAGS}
 LDFLAGS += ${SDL_LDFLAGS}
