@@ -1,11 +1,23 @@
-.PHONY: all clean
+GSC = gsc
 
-GSC = ${shell [ `which gambit-gsc 2>/dev/null` ] && echo gambit-gsc || echo gsc}
+SDL_CONFIG = sdl-config
+PKG_CONFIG = pkg-config
 
-all: ${targets}
+SDL_CFLAGS = ${shell ${SDL_CONFIG} --cflags}
+SDL_LDFLAGS = ${shell ${SDL_CONFIG} --libs}
+CFLAGS += ${SDL_CFLAGS}
+LDFLAGS += ${SDL_LDFLAGS}
 
-%.o1: %.scm
-	${GSC} ${GSCFLAGS} -cc-options "${CFLAGS}" -ld-options "${LDFLAGS}" $<
+CAIRO_CFLAGS = ${shell ${PKG_CONFIG} --cflags cairo}
+CAIRO_LDFLAGS = ${shell ${PKG_CONFIG} --libs cairo}
+CFLAGS += ${CAIRO_CFLAGS}
+LDFLAGS += ${CAIRO_LDFLAGS}
 
-clean:
-	-rm -f ${targets} 2>/dev/null
+PANGO_CFLAGS = \
+	${shell ${PKG_CONFIG} --cflags pango} \
+	${shell ${PKG_CONFIG} --cflags SDL_Pango}
+PANGO_LDFLAGS = \
+	${shell ${PKG_CONFIG} --libs pango} \
+	${shell ${PKG_CONFIG} --libs SDL_Pango}
+CFLAGS += ${PANGO_CFLAGS}
+LDFLAGS += ${PANGO_LDFLAGS}
