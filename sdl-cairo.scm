@@ -213,7 +213,8 @@ premult_pixels_onto(struct sdl_cairo *c, SDL_Rect *rect)
       rect->y = 0;
     }
     if (rect->y + rect->h >= c->height) {
-      rect->h = c->height - rect->y - 1;
+      i = c->height - rect->y - 1;
+      rect->h = (i >= 0) ? i : 0;
     }
 
     if (rect->w > 0 && rect->h > 0) {
