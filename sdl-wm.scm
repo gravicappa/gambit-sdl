@@ -15,3 +15,9 @@
              }
              ___result = ret;
             "))
+
+(define wm-set-caption
+  (c-lambda (char-string char-string) void "SDL_WM_SetCaption"))
+
+(define wm-set-caption/utf8
+  (c-lambda (UTF-8-string UTF-8-string) void "SDL_WM_SetCaption"))
