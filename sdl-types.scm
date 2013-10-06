@@ -1,4 +1,3 @@
-
 (c-define-type rgb-color unsigned-int32)
 (c-define-type Uint8 unsigned-int8)
 (c-define-type Sint8 int8)

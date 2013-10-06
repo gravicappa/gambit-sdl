@@ -17,6 +17,7 @@ eof
 (include "sdl-accessors.scm")
 (include "sdl-keysym%.scm")
 (include "sdl-events%.scm")
+(include "sdl-joystick.scm")
 
 (define make-rect
   (c-lambda (int int int int)
@@ -76,9 +77,22 @@ eof
             "))
 
 (define (init! flags)
-  (c-lambda (unsigned-int32)
-            bool
-            "___result = (SDL_Init(___arg1) == 0);"))
+  (let ((flags (if (pair? flags)
+                   (apply bitwise-ior flags)
+                   flags)))
+    ((c-lambda (unsigned-int32)
+               bool
+               "___result = (SDL_Init(___arg1) == 0);")
+     flags)))
+
+(define (init-subsystem flags)
+  (let ((flags (if (pair? flags)
+                   (apply bitwise-ior flags)
+                   flags)))
+    ((c-lambda (unsigned-int32)
+               bool
+               "___result = (SDL_InitSubSystem(___arg1) == 0);")
+     flags)))
 
 (define quit!
   (c-lambda () void "SDL_Quit"))

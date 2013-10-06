@@ -16,7 +16,8 @@ sdl_sources = \
 	sdl-const.scm \
 	sdl-events%.scm \
 	sdl-keysym%.scm \
-	sdl-accessors.scm
+	sdl-accessors.scm \
+	sdl-joystick.scm
 
 sdl-events%.scm:
 	scripts/make-sdl-events > $@
